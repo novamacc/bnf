@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Mandala from '../components/Mandala.astro';
+import { dict, data, type Lang } from '../i18n';
+import { site } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang); const d = data(lang); const v = t.visit;
+const tel = (p: string) => 'tel:' + p.replace(/[^+\d]/g, '');
+---
+<Base lang={lang} title={v.title} description={v.lead} current="visit" image="2026/01/Contact-Us-new.jpg">
+  <h1 class="sr-only">{v.title}</h1>
+  <div class="contact-banner"><Img k="2026/01/Contact-Us-new.jpg" alt={v.title} sizes="100vw" eager /></div>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="split" style="align-items:start">
+        <div>
+          <p class="kicker">{v.kicker}</p>
+          <h2 class="h1">{v.lead}</h2>
+        </div>
+        <div>
+          <div class="contact-cards" style="grid-template-columns:1fr">
+            <div class="contact-card"><h2>{v.email}</h2><p><a href={`mailto:${site.email}`}>{site.email}</a></p></div>
+            <div class="contact-card"><h2>{v.call}</h2><p><a href={tel(site.phone)}>{site.phone}</a></p></div>
+          </div>
+          <div style="margin-top:2.4rem">
+            <h3 class="h3">{v.write}</h3>
+            <p style="margin-top:.8rem" class="muted">{v.writeText}</p>
+            <a class="btn btn-solid" href={`mailto:${site.email}`}>{v.writeCta} →</a>
+          </div>
+        </div>
+      </div>
+      <div class="split" style="margin-top:clamp(56px,8vw,104px)">
+        <div class="split-media"><Img k="2026/01/CANADA-最新版.jpg" alt="" sizes="(max-width: 860px) 92vw, 560px" cap={1600} /></div>
+        <div class="whale" style="max-width:420px;justify-self:center"><Img k="2026/01/鲸鱼地球.jpg" alt="" sizes="(max-width: 860px) 80vw, 420px" cap={900} /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band rule-top" id="branches">
+    <div class="wrap">
+      <div class="title-block"><p class="kicker">{v.branches}</p><h2 class="h2">{v.branches}</h2></div>
+      <ul class="branches">
+        {d.branches.map((b) => (
+          <li class="branch reveal" id={b.id}>
+            {b.banner
+              ? <div class="branch-banner"><Img k={b.banner} alt={b.country} sizes="(max-width: 760px) 92vw, 580px" cap={900} /></div>
+              : <div class="branch-tile" aria-hidden="true">
+                  <Mandala class="mandala" size={600} />
+                  <svg class="lotus-mark" viewBox="0 0 64 28" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"><path d="M32 3c5 5 6 13 0 21-6-8-5-16 0-21z"/><path d="M32 24c-2-8-8-13-15-14 0 8 6 13 15 14z"/><path d="M32 24c2-8 8-13 15-14 0 8-6 13-15 14z"/><path d="M32 24c-7-3-15-3-22 1 6 3 14 3 22-1z"/><path d="M32 24c7-3 15-3 22 1-6 3-14 3-22-1z"/><path d="M12 26h40"/></g></svg>
+                  <span class="country">{b.country}</span>
+                </div>}
+            <h3>{b.country}</h3>
+            {b.cities && <p class="cities">{b.cities}</p>}
+            {(b.phone || b.email || b.address || b.contact) && (
+              <dl>
+                {b.phone && <><dt>{v.phone}</dt><dd><a href={tel(b.phone)}>{b.phone}</a></dd></>}
+                {b.email && <><dt>{v.email}</dt><dd><a href={`mailto:${b.email}`}>{b.email}</a></dd></>}
+                {b.address && <><dt>{v.address}</dt><dd lang={b.id === 'japan' ? 'ja' : undefined}>{b.address}</dd></>}
+                {b.contact && <><dt>{v.contact}</dt><dd>{b.contact}</dd></>}
+              </dl>
+            )}
+            {b.note && <p class="muted">{b.note}</p>}
+            {b.extra && b.extra.length > 0 && <div class="extra">{b.extra.map((k) => <Img k={k} alt="" sizes="160px" cap={480} />)}</div>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band-maroon" id="connections">
+    <Mandala class="mandala" size={700} />
+    <div class="wrap" style="position:relative">
+      <div class="title-block"><p class="kicker">{t.footer.all}</p><h2 class="h2">{v.connections}</h2><p class="lead" style="margin-top:1rem">{v.connectionsText}</p></div>
+      <ul class="connections">{d.connections.map((c) => <li><b>{c.place}</b>{c.cities && <span>{c.cities}</span>}</li>)}</ul>
+      <p class="notice">{v.notice}</p>
+    </div>
+  </section>
+</Base>

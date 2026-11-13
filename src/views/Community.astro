@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import PageHead from '../components/PageHead.astro';
+import Lotus from '../components/Lotus.astro';
+import { dict, data, url, type Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang); const d = data(lang); const c = t.community; const h = t.home;
+---
+<Base lang={lang} title={c.title} description={c.lead} current="community" image="2024/08/community-bodhinature.jpg">
+  <PageHead kicker={c.kicker} title={c.title} lead={c.lead} image="2024/08/community-bodhinature.jpg" shape="wide" />
+  <section class="band">
+    <div class="wrap">
+      {d.community.map((x, i) => (
+        <div class={`split reveal${i % 2 ? ' flip' : ''}`}>
+          <div class="split-media"><Img k={x.image} alt="" sizes="(max-width: 860px) 92vw, 560px" /></div>
+          <div>
+            <h2>{x.title}</h2>
+            <div class="body">{x.text.map((p) => <p>{p}</p>)}</div>
+            <div class="btn-row" style="margin-top:1.4rem">
+              {x.links.map((l) => <a class="link-arrow" href={l.href} rel="noopener" target="_blank">{l.label} ↗</a>)}
+              <a class="link-arrow" href={url(lang, 'visit')}>{c.register} →</a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band band-cream rule-top" id="online">
+    <div class="wrap">
+      <div class="title-block"><h2 class="h2">{c.online}</h2><p class="lead">{c.onlineLead}</p></div>
+      <ul class="grid-cards">
+        {d.onlineClasses.map((o) => (
+          <li class="tile reveal">
+            <Img k={o.image} alt="" sizes="(max-width: 600px) 92vw, 380px" cap={900} />
+            <h3>{o.title}</h3>
+            <p>{o.goal}</p>
+            <ul class="prose-list" style="margin:.8rem 0">{o.content.map((x) => <li>{x}</li>)}</ul>
+            {o.times.map((x) => <p class="mono" style="margin:0 0 .3em">{x}</p>)}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band-blush" id="retreat">
+    <div class="wrap">
+      <div class="retreat-grid">
+        <div>
+          <p class="kicker">{h.retreatKicker}</p>
+          <h2 class="h2">{h.retreatTitle}</h2>
+          <p class="lead" style="margin-top:1.2rem">{h.retreatText}</p>
+          <p class="retreat-sub">{h.retreatPractice}</p>
+          <ul class="chips">{d.retreatPractices.map((x) => <li>{x}</li>)}</ul>
+          <p class="retreat-sub">{c.entry}</p>
+          <ul class="chips">{c.entryList.map((x) => <li>{x}</li>)}</ul>
+          <div class="retreat-photo"><Img k="2022/08/retreat-3-900.jpg" alt="" sizes="(max-width: 900px) 92vw, 560px" cap={900} /></div>
+        </div>
+        <div>
+          <p class="retreat-sub" style="margin-top:0">{h.retreatDay}</p>
+          <ol class="schedule">{d.schedule.map((s) => <li><time>{s.time}</time><span>{s.what}</span></li>)}</ol>
+          <p class="retreat-sub">{c.precepts}</p>
+          <ol class="prose-list ordered">{d.precepts.five.map((x) => <li>{x}</li>)}</ol>
+          <p class="retreat-sub">{c.extra}</p>
+          <ol class="prose-list">{d.precepts.three.map((x) => <li>{x}</li>)}</ol>
+          <p class="muted" style="font-size:.92rem">{d.precepts.note}</p>
+        </div>
+      </div>
+      <div style="margin-top:clamp(48px,7vw,88px)">
+        <p class="kicker">{c.retreat}</p>
+        <ul class="grid-cards">{d.retreatRules.map((r) => <li class="tile"><h3>{r.title}</h3><p>{r.text}</p></li>)}</ul>
+      </div>
+    </div>
+  </section>
+  <Lotus /><div class="lotus-sep"></div>
+</Base>

@@ -1,0 +1,112 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Mandala from '../components/Mandala.astro';
+import Lotus from '../components/Lotus.astro';
+import { dict, data, url, programmeUrl, type Lang } from '../i18n';
+interface Props { lang: Lang; slug: string }
+const { lang, slug } = Astro.props;
+const t = dict(lang); const d = data(lang); const P = t.programmes;
+const p = d.programmes.find((x) => x.slug === slug)!;
+const others = d.programmes.filter((x) => x.slug !== slug);
+const ext = (h: string) => /^https?:/.test(h);
+---
+<Base lang={lang} title={p.title} description={p.short} current="programmes" image={p.peek}>
+  <header class="page-head">
+    <Mandala class="mandala" size={560} />
+    <div class="wrap page-head-grid">
+      <div>
+        <p class="kicker"><a href={url(lang, 'programmes')} style="text-decoration:none">{P.title}</a> · {p.kicker}</p>
+        <h1>{p.title}</h1>
+        <p class="lead">{p.lead}</p>
+      </div>
+      <div class="prog-hero-tile" style={`background:${p.tint}`}><Img k={p.icon} alt="" sizes="(max-width: 860px) 220px, 380px" cap={900} eager /></div>
+    </div>
+  </header>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="split">
+        <div class="split-media"><Img k={p.peek} alt="" sizes="(max-width: 860px) 92vw, 560px" /></div>
+        <div class="body lead">{p.intro.map((x) => <p>{x}</p>)}</div>
+      </div>
+      {p.sections.map((s, i) => (
+        <div class={`split reveal${i % 2 === 0 ? ' flip' : ''}`} id={s.id}>
+          {s.image && <div class="split-media"><Img k={s.image} alt="" sizes="(max-width: 860px) 92vw, 560px" /></div>}
+          <div>
+            {s.kicker && <p class="kicker">{s.kicker}</p>}
+            <h2>{s.title}</h2>
+            {s.quote && <blockquote class="pull">{s.quote}</blockquote>}
+            {s.body && <div class="body">{s.body.map((x) => <p>{x}</p>)}</div>}
+            {s.list && <ol class={`prose-list${s.ordered ? ' ordered' : ''}`}>{s.list.map((x) => <li>{x}</li>)}</ol>}
+            {s.links && s.links.map((l) => <p><a class="link-arrow" href={l.href} rel="noopener" target="_blank">{l.label} ↗</a></p>)}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {p.practices && (
+    <section class="band band-cream rule-top">
+      <div class="wrap">
+        <div class="title-block"><h2 class="h2">{p.practices.title}</h2></div>
+        <ul class="grid-cards">
+          {p.practices.items.map((x) => (
+            <li class="tile reveal">
+              {x.href ? <a href={x.href} rel="noopener" target="_blank">{x.image && <Img k={x.image} alt="" sizes="(max-width: 600px) 92vw, 300px" cap={900} />}<h3>{x.title} ↗</h3></a>
+                : <>{x.image && <Img k={x.image} alt="" sizes="(max-width: 600px) 92vw, 300px" cap={900} />}<h3>{x.title}</h3></>}
+              {x.text && <p>{x.text}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {p.books && (
+    <section class="band">
+      <div class="wrap">
+        <div class="title-block"><h2 class="h2">{P.books}</h2></div>
+        <ul class="books">
+          {p.books.map((b) => (
+            <li class="book reveal" lang={b.lang === 'Deutsch' ? 'de' : b.lang === 'Français' ? 'fr' : b.lang === 'Nederlands' ? 'nl' : 'en'}>
+              <Img k={b.cover} alt={b.title} sizes="(max-width: 900px) 45vw, 280px" cap={900} />
+              <span class="lang">{b.lang}</span>
+              <h3>{b.title}</h3>
+              <div class="links"><a class="link-arrow" href={b.read} rel="noopener" target="_blank">{b.readLabel}</a><a class="link-arrow" href={b.download} rel="noopener" target="_blank">{b.downloadLabel}</a></div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {(p.timetable || p.more) && (
+    <section class="band rule-top">
+      <div class="wrap split" style="align-items:start">
+        {p.timetable && (
+          <div class="timetable">
+            <p class="kicker">{P.timetable}</p>
+            <h3>{p.timetable.title}</h3>
+            <dl>{p.timetable.rows.map((r) => <><dt>{r.when}</dt><dd>{r.what}</dd></>)}</dl>
+            {p.timetable.note && <p class="note">{p.timetable.note}</p>}
+          </div>
+        )}
+        <div>
+          {p.more && <><p class="kicker">{P.more}</p><ul class="prose-list">{p.more.map((l) => <li><a href={l.href} rel="noopener" target="_blank">{l.label} ↗</a></li>)}</ul></>}
+          <a class="btn btn-solid" href={url(lang, 'visit')}>{P.contact} <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <Lotus />
+  <section class="band-tight">
+    <div class="wrap">
+      <p class="kicker">{P.other}</p>
+      <ul class="pnav">
+        {others.map((o) => <li><a href={programmeUrl(lang, o.slug)}><span class="t" style={`background:${o.tint}`}><Img k={o.icon} alt="" sizes="48px" cap={480} /></span><span>{o.title}</span></a></li>)}
+      </ul>
+    </div>
+  </section>
+</Base>

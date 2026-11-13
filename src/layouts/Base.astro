@@ -1,0 +1,104 @@
+---
+import '../styles/global.css';
+import PrayerFlags from '../components/PrayerFlags.astro';
+import MandalaDefs from '../components/MandalaDefs.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import manifest from '../data/images.json';
+import { dict, url, asset, relPath, type Lang } from '../i18n';
+import { site as siteData } from '../data/site';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+  current?: string;      // nav key for aria-current
+  image?: string;        // upload key for og:image
+  noindex?: boolean;
+}
+const { lang, title, description, current = '', image = siteData.hero, noindex = false } = Astro.props;
+const t = dict(lang);
+const rel = relPath(Astro.url.pathname);
+const enHref = url('en', rel);
+const zhHref = url('zh', rel);
+const altHref = lang === 'en' ? zhHref : enHref;
+const siteUrl = (Astro.site?.toString() ?? '').replace(/\/$/, '');
+const fullTitle = title ? `${title} · ${t.name}` : `${t.name} — ${t.tagline}`;
+const desc = description ?? t.description;
+const og = (manifest as Record<string, { src: string; widths: number[] }>)[image];
+const ogUrl = og ? siteUrl + asset(`${og.src}-${og.widths[og.widths.length - 1]}.webp`) : undefined;
+const searchIndex = url(lang, 'search-index.json');
+---
+<!doctype html>
+<html lang={t.htmlLang} data-lang={lang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={desc} />
+  {noindex && <meta name="robots" content="noindex" />}
+  <link rel="canonical" href={siteUrl + (lang === 'en' ? enHref : zhHref)} />
+  <link rel="alternate" hreflang="en" href={siteUrl + enHref} />
+  <link rel="alternate" hreflang="zh-Hans" href={siteUrl + zhHref} />
+  <link rel="alternate" hreflang="x-default" href={siteUrl + enHref} />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={desc} />
+  <meta property="og:locale" content={t.ogLocale} />
+  {ogUrl && <meta property="og:image" content={ogUrl} />}
+  <meta name="theme-color" content="#3A0C16" />
+  <link rel="icon" href={asset('favicon.ico')} sizes="32x32" />
+  <link rel="icon" href={asset('icon-192.png')} type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href={asset('apple-touch-icon.png')} />
+  <link rel="manifest" href={asset('site.webmanifest')} />
+  <link rel="preload" href={asset('fonts/fraunces.woff2')} as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href={asset('fonts/inter.woff2')} as="font" type="font/woff2" crossorigin />
+  <style is:inline set:html={`@font-face{font-family:Fraunces;src:url(${asset('fonts/fraunces.woff2')}) format('woff2');font-weight:100 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:Fraunces;src:url(${asset('fonts/fraunces-italic.woff2')}) format('woff2');font-weight:100 900;font-style:italic;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F}@font-face{font-family:Inter;src:url(${asset('fonts/inter.woff2')}) format('woff2');font-weight:100 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}`} />
+</head>
+<body>
+  <a class="skip" href="#main">{t.skip}</a>
+  <MandalaDefs />
+  <PrayerFlags />
+  <Header lang={lang} altHref={altHref} current={current} />
+  <main id="main">
+    <slot />
+  </main>
+  <Footer lang={lang} altHref={altHref} />
+
+  <dialog class="search" id="search" data-index={searchIndex} aria-label={t.search.open}>
+    <form method="dialog" class="search-box">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input type="search" placeholder={t.search.placeholder} autocomplete="off" spellcheck="false" aria-label={t.search.open} aria-controls="search-results" />
+      <button class="kbd" value="close" aria-label={t.close}>Esc</button>
+    </form>
+    <ul class="search-results" id="search-results" role="listbox"></ul>
+    <p class="search-empty" hidden>{t.search.empty}</p>
+  </dialog>
+
+  <script is:inline>
+(()=>{const d=document,$=s=>d.querySelector(s),$$=s=>d.querySelectorAll(s);
+const h=$('[data-header]'),sc=()=>h.classList.toggle('is-scrolled',scrollY>8);addEventListener('scroll',sc,{passive:true});sc();
+const dr=$('#drawer'),mb=$('[data-menu-open]'),setD=o=>{dr.hidden=!o;mb.setAttribute('aria-expanded',o);d.documentElement.classList.toggle('lock',o)};
+mb.onclick=()=>setD(dr.hidden);$$('[data-menu-close]').forEach(b=>b.addEventListener('click',()=>setD(false)));
+addEventListener('keydown',e=>{if(e.key=='Escape'&&!dr.hidden)setD(false)});
+$$('[data-lang-switch]').forEach(a=>a.addEventListener('click',()=>{if(location.hash)a.href=a.href.split('#')[0]+location.hash}));
+const dl=$('#search'),inp=dl.querySelector('input'),ul=dl.querySelector('ul'),em=dl.querySelector('.search-empty');let idx,sel=0;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
+const run=()=>{if(!idx)return;const q=inp.value.trim().toLowerCase(),w=q.split(/\s+/).filter(Boolean);
+let r=[];for(const o of idx){const t=o.t.toLowerCase(),x=(o.x||'').toLowerCase();let s=0,ok=1;for(const v of w){if(t.includes(v))s+=t.startsWith(v)?6:4;else if(x.includes(v))s+=1;else{ok=0;break}}if(ok)r.push([s,o])}
+if(w.length)r.sort((a,b)=>b[0]-a[0]);r=r.slice(0,w.length?12:8);sel=0;
+ul.innerHTML=r.map(([,o],i)=>'<li role="option" aria-selected="'+(i==0)+'"><a href="'+esc(o.u)+'"><span class="sr-kind">'+esc(o.k)+'</span><span class="sr-title">'+esc(o.t)+'</span>'+(o.s?'<span class="sr-sub">'+esc(o.s)+'</span>':'')+'</a></li>').join('');em.hidden=r.length>0};
+const mark=()=>[...ul.children].forEach((li,i)=>{li.setAttribute('aria-selected',i==sel);if(i==sel)li.scrollIntoView({block:'nearest'})});
+const open=async()=>{if(!dl.open)dl.showModal();inp.focus();if(!idx){try{idx=await(await fetch(dl.dataset.index)).json()}catch(e){idx=[]}}run()};
+$$('[data-search-open]').forEach(b=>b.onclick=open);inp.oninput=run;
+inp.onkeydown=e=>{const n=ul.children.length;if(e.key=='ArrowDown'){e.preventDefault();sel=(sel+1)%n;mark()}else if(e.key=='ArrowUp'){e.preventDefault();sel=(sel-1+n)%n;mark()}else if(e.key=='Enter'&&n){e.preventDefault();ul.children[sel].querySelector('a').click()}};
+dl.onclick=e=>{if(e.target==dl)dl.close()};
+addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()=='k'){e.preventDefault();dl.open?dl.close():open()}else if(e.key=='/'&&!dl.open&&!/INPUT|TEXTAREA|SELECT/.test(d.activeElement.tagName)){e.preventDefault();open()}});
+const q=$('[data-rotator]');if(q){const it=[...q.querySelectorAll('[data-q]')],n=q.querySelector('[data-qn]');let i=0,tm;
+const show=j=>{it[i].hidden=true;i=(j+it.length)%it.length;it[i].hidden=false;n.textContent=String(i+1).padStart(2,'0')};
+const rm=matchMedia('(prefers-reduced-motion: reduce)').matches,go=()=>{clearInterval(tm);if(!rm)tm=setInterval(()=>show(i+1),9000)};
+q.querySelector('[data-prev]').onclick=()=>{show(i-1);go()};q.querySelector('[data-next]').onclick=()=>{show(i+1);go()};
+q.onmouseenter=q.onfocusin=()=>clearInterval(tm);q.onmouseleave=go;go()}})();
+  </script>
+</body>
+</html>

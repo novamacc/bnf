@@ -1,0 +1,34 @@
+---
+/**
+ * Responsive WebP from the build-time manifest (scripts/images.py).
+ * `cap` limits the largest candidate so a small slot never ships a large file.
+ */
+import manifest from '../data/images.json';
+import { asset } from '../i18n';
+
+interface Props {
+  k: string; alt?: string; sizes?: string; cap?: number; class?: string;
+  eager?: boolean; ratio?: string; position?: string; style?: string;
+}
+const { k, alt = '', sizes = '100vw', cap = 1600, class: cls, eager = false, ratio, position, style } = Astro.props;
+const m = (manifest as Record<string, { src: string; w: number; h: number; widths: number[]; alpha: boolean }>)[k];
+if (!m) throw new Error(`Image not in manifest: ${k} — run scripts/images.py`);
+let widths = m.widths.filter((w) => w <= cap);
+if (!widths.length) widths = [m.widths[0]];
+const largest = widths[widths.length - 1];
+const srcset = widths.map((w) => `${asset(`${m.src}-${w}.webp`)} ${w}w`).join(', ');
+const styles = [ratio && `aspect-ratio:${ratio}`, position && `object-position:${position}`, style].filter(Boolean).join(';');
+---
+<img
+  src={asset(`${m.src}-${largest}.webp`)}
+  srcset={widths.length > 1 ? srcset : undefined}
+  sizes={widths.length > 1 ? sizes : undefined}
+  width={largest}
+  height={Math.round((m.h * largest) / m.w)}
+  alt={alt}
+  class={cls}
+  style={styles || undefined}
+  loading={eager ? 'eager' : 'lazy'}
+  decoding={eager ? 'sync' : 'async'}
+  fetchpriority={eager ? 'high' : undefined}
+/>

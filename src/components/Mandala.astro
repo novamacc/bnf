@@ -1,0 +1,6 @@
+---
+/** Etched mandala: references the single <symbol id="mandala"> defined in MandalaDefs. */
+interface Props { class?: string; size?: number }
+const { class: cls, size = 600 } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 600 600" width={size} height={size} aria-hidden="true" focusable="false"><use href="#mandala" width="600" height="600" /></svg>

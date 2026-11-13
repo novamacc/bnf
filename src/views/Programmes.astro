@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import PageHead from '../components/PageHead.astro';
+import { dict, data, programmeUrl, type Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang); const d = data(lang); const p = t.programmes;
+---
+<Base lang={lang} title={p.title} description={p.lead} current="programmes" image="2024/08/programs-new.jpg">
+  <PageHead kicker={p.kicker} title={p.title} lead={p.lead} image="2024/08/programs-new.jpg" shape="wide" />
+  <section class="band">
+    <div class="wrap">
+      <ul class="prog-cards">
+        {d.programmes.map((x, i) => (
+          <li class="prog-card reveal">
+            <a href={programmeUrl(lang, x.slug)}>
+              <div class="prog-tile" style={`background:${x.tint}`}><Img k={x.icon} alt="" sizes="(max-width: 760px) 70vw, 300px" cap={900} /></div>
+              <span class="kick">0{i + 1} · {x.kicker}</span>
+              <h2>{x.title}</h2>
+              <p>{x.short}</p>
+              <span class="link-arrow">{p.explore} →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>

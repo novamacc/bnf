@@ -1,0 +1,24 @@
+---
+/** The mandala geometry, emitted once per page. Stroke inherits currentColor. */
+const rings = [
+  { r: 92, n: 8, len: 46, w: 20 },
+  { r: 150, n: 16, len: 52, w: 16 },
+  { r: 212, n: 24, len: 56, w: 13 },
+  { r: 270, n: 36, len: 30, w: 8 },
+];
+const petal = (r: number, len: number, w: number) =>
+  `M0 ${-r}C${w} ${-r - len * 0.35} ${+(w * 0.6).toFixed(1)} ${-r - len * 0.85} 0 ${-r - len}C${+(-w * 0.6).toFixed(1)} ${-r - len * 0.85} ${-w} ${-r - len * 0.35} 0 ${-r}Z`;
+---
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="mandala" viewBox="-300 -300 600 600">
+    <g fill="none" stroke="currentColor" stroke-width="1">
+      <circle r="22" /><circle r="44" /><circle r="70" stroke-dasharray="2 5" />
+      <circle r="92" /><circle r="150" /><circle r="212" /><circle r="270" /><circle r="296" stroke-dasharray="1 6" />
+      {rings.map(({ r, n, len, w }) => {
+        const d = petal(r, len, w);
+        return Array.from({ length: n }, (_, i) => <use href={`#p${r}`} transform={`rotate(${+((360 / n) * i + (n % 16 === 0 ? 180 / n : 0)).toFixed(2)})`} />).concat([<path id={`p${r}`} d={d} />]);
+      })}
+      {Array.from({ length: 8 }, (_, i) => <path d="M0 -22V-92" transform={`rotate(${45 * i + 22.5})`} />)}
+    </g>
+  </symbol>
+</svg>

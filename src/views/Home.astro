@@ -1,0 +1,219 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Mandala from '../components/Mandala.astro';
+import Lotus from '../components/Lotus.astro';
+import EventCard from '../components/EventCard.astro';
+import { dict, data, url, programmeUrl, type Lang } from '../i18n';
+import { site } from '../data/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang);
+const d = data(lang);
+const h = t.home;
+const cities = d.branches.filter((b) => b.cities).flatMap((b) => b.cities!.split(' · '));
+const marquee = [...d.programmes.map((p) => ({ text: p.title, city: false })), ...cities.slice(0, 9).map((c) => ({ text: c, city: true }))];
+---
+<Base lang={lang} current="home">
+  <!-- 1 · Hero -->
+  <section class="hero">
+    <Mandala class="mandala hero-mandala" size={640} />
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">{h.heroKicker}</p>
+        <h1 class="display hero-title">{h.heroTitle.map((l) => <span>{l}</span>)}</h1>
+        <p class="lead">{h.heroLead}</p>
+        <div class="btn-row">
+          <a class="btn btn-solid" href={url(lang, 'programmes')}>{h.heroCta} <span class="arrow">→</span></a>
+          <a class="btn" href={url(lang, 'about')}>{h.heroCta2}</a>
+        </div>
+      </div>
+      <div class="hero-arch">
+        <div class="hero-arch-frame">
+          <Img k={site.hero} alt="" sizes="(max-width: 900px) 86vw, 520px" eager position="50% 42%" />
+        </div>
+        <span class="hero-arch-cap">{h.heroNote}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · Marquee -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {[0, 1].map(() => <ul>{marquee.map((m) => <li class={m.city ? 'city' : undefined}>{m.text}</li>)}</ul>)}
+    </div>
+  </div>
+
+  <!-- 3 · Intro -->
+  <section class="band" id="intro">
+    <div class="wrap intro-grid">
+      <div class="reveal">
+        <p class="kicker">{h.introKicker}</p>
+        <h2 class="h1 intro-title">{h.introTitle[0]} <span class="accent">{h.introTitle[1]}</span></h2>
+        <div class="intro-photo"><Img k="2022/06/Earth-Unity3.jpg" alt="" sizes="(max-width: 900px) 92vw, 560px" cap={1600} /></div>
+      </div>
+      <div class="reveal">
+        <p class="lead">{h.introText}</p>
+        <ol class="questions">{h.questions.map((q) => <li>{q}</li>)}</ol>
+        <p style="margin-top:2rem"><a class="link-arrow" href={url(lang, 'about')}>{t.nav.about} →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <Lotus />
+
+  <!-- 4 · What we offer -->
+  <section class="band" id="programmes">
+    <div class="wrap">
+      <div class="title-row">
+        <div><p class="kicker">{h.offerKicker}</p><h2 class="h2">{h.offerTitle}</h2></div>
+        <a class="link-arrow" href={url(lang, 'programmes')}>{t.programmes.back} →</a>
+      </div>
+      <ol class="pindex">
+        {d.programmes.map((p, i) => (
+          <li class="pindex-row">
+            <a href={programmeUrl(lang, p.slug)}>
+              <span class="pindex-num">0{i + 1}</span>
+              <span class="pindex-tile" style={`background:${p.tint}`}><Img k={p.icon} alt="" sizes="76px" cap={480} /></span>
+              <span class="pindex-title">{p.title}</span>
+              <span class="pindex-short">{p.short}</span>
+              <span class="pindex-go" aria-hidden="true">→</span>
+            </a>
+            <div class="pindex-peek" aria-hidden="true"><Img k={p.peek} alt="" sizes="240px" cap={480} /></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5 · What's on -->
+  <section class="band rule-top" id="events">
+    <div class="wrap">
+      <div class="title-row">
+        <div><p class="kicker">{h.onKicker}</p><h2 class="h2">{h.onTitle}</h2></div>
+        <a class="link-arrow" href={url(lang, 'events')}>{h.onAll} →</a>
+      </div>
+      <div class="events-grid">{d.events.map((e) => <EventCard lang={lang} e={e} heading="h3" />)}</div>
+    </div>
+  </section>
+
+  <!-- 6 · Weekend retreat (light blush band) -->
+  <section class="band band-blush" id="retreat">
+    <div class="wrap retreat-grid">
+      <div class="reveal">
+        <p class="kicker">{h.retreatKicker}</p>
+        <h2 class="h2">{h.retreatTitle}</h2>
+        <p class="lead" style="margin-top:1.2rem">{h.retreatText}</p>
+        <p class="retreat-sub">{h.retreatPractice}</p>
+        <ul class="chips">{d.retreatPractices.map((c) => <li>{c}</li>)}</ul>
+        <div class="retreat-photo"><Img k="2022/08/retreat-1.jpg" alt="" sizes="(max-width: 900px) 92vw, 560px" /></div>
+      </div>
+      <div class="reveal">
+        <p class="retreat-sub" style="margin-top:0">{h.retreatDay}</p>
+        <ol class="schedule">{d.schedule.map((s) => <li><time>{s.time}</time><span>{s.what}</span></li>)}</ol>
+        <p style="margin-top:2rem"><a class="btn" href={url(lang, 'community') + '#retreat'}>{h.retreatCta} <span class="arrow">→</span></a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · Numbers (jade) -->
+  <section class="band band-jade" id="numbers">
+    <div class="wrap">
+      <div class="stats-head"><div><p class="kicker">{h.statsKicker}</p><h2 class="h2">{h.statsTitle}</h2></div></div>
+      <ul class="stats">{d.stats.map((s) => <li><strong>{s.value}</strong><span>{s.label}</span></li>)}</ul>
+    </div>
+  </section>
+
+  <!-- 8 · Volunteer callout -->
+  <section class="band" id="volunteer">
+    <div class="wrap">
+      <div class="callout reveal">
+        <div>
+          <p class="kicker">{h.volKicker}</p>
+          <h2 class="h2">{h.volTitle}</h2>
+          <p class="lead" style="margin-top:1.2rem">{h.volText}</p>
+          <a class="btn btn-saffron" href={url(lang, 'volunteer')}>{h.volCta} <span class="arrow">→</span></a>
+        </div>
+        <div class="callout-photos">
+          <Img k="2022/08/translate-900-1.jpg" alt="" sizes="(max-width: 800px) 45vw, 240px" cap={900} />
+          <Img k="2022/08/coordinate-900-4.jpg" alt="" sizes="(max-width: 800px) 45vw, 240px" cap={900} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · What we stand for -->
+  <section class="band rule-top" id="stand">
+    <div class="wrap">
+      <div class="title-block"><p class="kicker">{h.standKicker}</p><h2 class="h2">{h.standTitle}</h2></div>
+      <ol class="commit-grid">
+        {d.commitments.map((c, i) => (
+          <li class="commit reveal">
+            <span class="commit-num">0{i + 1}</span>
+            <Img k={c.image} alt="" sizes="(max-width: 900px) 38vw, 380px" cap={900} />
+            <h3>{c.title}</h3>
+            <p>{c.text[0]}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 10 · Wisdom words (maroon) -->
+  <section class="band band-maroon wisdom-band" id="wisdom">
+    <Mandala class="mandala" size={760} />
+    <div class="wrap">
+      <div class="title-row"><div><p class="kicker">{h.wisdomKicker}</p><h2 class="h2">{h.wisdomTitle}</h2></div>
+        <a class="link-arrow" href={url(lang, 'wisdom')} style="color:var(--gold)">{t.nav.wisdom} →</a></div>
+      <div class="rotator" data-rotator aria-roledescription="carousel">
+        <p class="rot-count" aria-live="polite"><span data-qn>01</span><small>/ {String(d.sayings.length).padStart(2, '0')}</small></p>
+        <div>
+          {d.sayings.map((s, i) => (
+            <figure class="rot-q" data-q hidden={i > 0} style="margin:0">
+              <h3>{s.title}</h3>
+              <blockquote>{s.text}</blockquote>
+            </figure>
+          ))}
+          <div class="rot-ctrl">
+            <button type="button" data-prev aria-label={h.prev}>←</button>
+            <button type="button" data-next aria-label={h.next}>→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · What changed (testimonials) -->
+  <section class="band" id="changed">
+    <div class="wrap">
+      <div class="title-block"><p class="kicker">{h.changedKicker}</p><h2 class="h2">{h.changedTitle}</h2></div>
+      <ul class="rail">
+        {d.testimonials.map((q) => (
+          <li>
+            <h3>{q.title}</h3>
+            <blockquote>{q.text}</blockquote>
+            <div class="person"><Img k={q.portrait} alt={q.name} sizes="52px" cap={160} /><div><b>{q.name}</b><span>{q.role}</span></div></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 12 · Support -->
+  <section class="band band-maroon support-band" id="support">
+    <Mandala class="mandala" size={600} />
+    <div class="wrap support-grid">
+      <div>
+        <p class="kicker">{h.supportKicker}</p>
+        <h2 class="h2">{h.supportTitle}</h2>
+        <p class="lead" style="margin-top:1.2rem">{h.supportText}</p>
+        <div class="btn-row">
+          <a class="btn btn-gold" href={url(lang, 'donate')}>{h.supportCta} <span class="arrow">→</span></a>
+          <a class="btn" href={url(lang, 'volunteer')}>{t.nav.volunteer}</a>
+        </div>
+      </div>
+      <div class="support-photo"><Img k="2024/08/donate.jpg" alt="" sizes="(max-width: 800px) 70vw, 360px" cap={900} /></div>
+    </div>
+  </section>
+</Base>

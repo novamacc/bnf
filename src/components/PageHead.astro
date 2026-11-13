@@ -1,0 +1,19 @@
+---
+import Img from './Img.astro';
+import Mandala from './Mandala.astro';
+interface Props { kicker: string; title: string; lead?: string; image?: string; shape?: 'arch' | 'wide'; position?: string }
+const { kicker, title, lead, image, shape = 'arch', position } = Astro.props;
+---
+<header class="page-head">
+  <Mandala class="mandala" size={560} />
+  <div class="wrap page-head-grid">
+    <div>
+      <p class="kicker">{kicker}</p>
+      <h1>{title}</h1>
+      {lead && <p class="lead">{lead}</p>}
+      <slot />
+    </div>
+    {image && <div class={`page-head-media ${shape}`}><Img k={image} alt="" sizes="(max-width: 860px) 90vw, 440px" cap={900} eager position={position} /></div>}
+    <slot name="aside" />
+  </div>
+</header>

@@ -1,0 +1,53 @@
+---
+import Mandala from './Mandala.astro';
+import { dict, data, url, programmeUrl, type Lang } from '../i18n';
+import { site } from '../data/site';
+
+interface Props { lang: Lang; altHref: string }
+const { lang, altHref } = Astro.props;
+const t = dict(lang);
+const d = data(lang);
+const year = new Date().getFullYear();
+---
+<footer class="site-footer band-maroon">
+  <Mandala class="mandala footer-mandala" size={520} />
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <p class="footer-name">{t.name}</p>
+      <p class="footer-about">{t.footer.about}</p>
+      <p class="footer-tag">{t.tagline}</p>
+    </div>
+    <nav class="footer-col" aria-label={t.footer.explore}>
+      <h2>{t.footer.explore}</h2>
+      <ul>
+        <li><a href={url(lang, 'about')}>{t.nav.about}</a></li>
+        <li><a href={url(lang, 'programmes')}>{t.nav.programmes}</a></li>
+        {d.programmes.map((p) => <li class="sub"><a href={programmeUrl(lang, p.slug)}>{p.title}</a></li>)}
+        <li><a href={url(lang, 'wisdom')}>{t.nav.wisdom}</a></li>
+        <li><a href={url(lang, 'community')}>{t.nav.community}</a></li>
+        <li><a href={url(lang, 'events')}>{t.nav.events}</a></li>
+        <li><a href={url(lang, 'volunteer')}>{t.nav.volunteer}</a></li>
+        <li><a href={url(lang, 'donate')}>{t.nav.donate}</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col">
+      <h2>{t.footer.contact}</h2>
+      <ul>
+        <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        <li><a href={`tel:${site.phone.replace(/[^+\d]/g, '')}`}>{site.phone}</a></li>
+        <li><a href={url(lang, 'visit')}>{t.nav.visit}</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>{t.footer.branches}</h2>
+      <ul class="footer-branches">
+        {d.branches.map((b) => <li><a href={url(lang, 'visit') + '#' + b.id}>{b.country}</a></li>)}
+      </ul>
+      <a class="footer-all" href={url(lang, 'visit') + '#connections'}>{t.footer.all} →</a>
+    </div>
+  </div>
+  <div class="wrap footer-base">
+    <p>© {year} {t.footer.rights}. {t.footer.rebuilt}</p>
+    <p><a href={altHref} data-lang-switch>{t.langSwitch}</a></p>
+  </div>
+</footer>

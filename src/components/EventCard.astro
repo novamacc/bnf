@@ -1,0 +1,35 @@
+---
+import Img from './Img.astro';
+import Mandala from './Mandala.astro';
+import manifest from '../data/images.json';
+import { dict, url, type Lang } from '../i18n';
+import type { EventItem } from '../data/types';
+
+interface Props { lang: Lang; e: EventItem; heading?: 'h2' | 'h3'; ask?: boolean; poster?: boolean }
+const { lang, e, heading = 'h3', ask = false, poster = false } = Astro.props;
+const t = dict(lang).events;
+const H = heading;
+const hasImg = !!e.image && e.image in (manifest as object);
+---
+<article class:list={['event reveal', { 'event-poster': poster }]} id={e.id}>
+  <div class:list={['event-media', { 'event-contain': e.fit === 'contain' }]}>
+    {hasImg
+      ? <Img k={e.image!} alt={poster ? e.title : ''} sizes="(max-width: 760px) 92vw, 580px" cap={900} position={e.crop ? '50% 35%' : poster ? '50% 0%' : undefined} />
+      : <div class="event-tile" aria-hidden="true">
+          <Mandala class="mandala" size={600} />
+          <span class="event-tile-date">{e.date}</span>
+          <span class="event-tile-place">{e.place}</span>
+        </div>}
+  </div>
+  <p class="event-kicker">{e.kicker}</p>
+  <H>{e.title}</H>
+  <dl class="event-facts">
+    <dt>{t.date}</dt><dd>{e.date}</dd>
+    {e.time && <><dt>{t.time}</dt><dd>{e.time}</dd></>}
+    {e.duration && <><dt>{t.duration}</dt><dd>{e.duration}</dd></>}
+    <dt>{t.place}</dt><dd>{e.place}</dd>
+  </dl>
+  <p>{e.text}</p>
+  {e.themes && <ul class="chips" style="margin-top:14px" aria-label={t.themes}>{e.themes.map((x) => <li>{x}</li>)}</ul>}
+  {ask && <p style="margin-top:18px"><a class="link-arrow" href={url(lang, 'visit')}>{t.ask} →</a></p>}
+</article>

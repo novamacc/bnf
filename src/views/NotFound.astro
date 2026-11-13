@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import Mandala from '../components/Mandala.astro';
+import { dict, url, type Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang).notFound;
+const zh404 = url('zh', '404/');
+---
+<Base lang={lang} title={t.title} noindex>
+  <section class="band nf">
+    <Mandala class="mandala" size={700} />
+    <div class="wrap" style="position:relative">
+      <p class="display">404</p>
+      <h1 class="h2">{t.title}</h1>
+      <p class="lead" style="margin:1rem auto 2rem">{t.lead}</p>
+      <a class="btn btn-solid" href={url(lang)}>{t.cta} →</a>
+    </div>
+  </section>
+  {lang === 'en' && <script is:inline define:vars={{ zh404 }}>if (location.pathname.indexOf('/zh/') > -1 && location.pathname !== zh404) location.replace(zh404);</script>}
+</Base>

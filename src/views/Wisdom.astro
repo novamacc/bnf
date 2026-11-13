@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import PageHead from '../components/PageHead.astro';
+import Mandala from '../components/Mandala.astro';
+import { dict, data, type Lang } from '../i18n';
+import { site } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang); const d = data(lang); const w = t.wisdom;
+---
+<Base lang={lang} title={w.title} description={w.lead} current="wisdom" image="2024/08/智慧语录.png">
+  <PageHead kicker={w.kicker} title={w.title} lead={w.lead}>
+    <div slot="aside" class="prog-hero-tile" style="background:#EADFC6"><Img k="2024/08/智慧语录.png" alt="" sizes="(max-width: 860px) 220px, 380px" cap={900} eager /></div>
+  </PageHead>
+  <section class="band">
+    <div class="wrap">
+      <ol class="sayings">
+        {d.sayings.map((s, i) => (
+          <li class="saying"><span class="n">{String(i + 1).padStart(2, '0')}</span><h2>{s.title}</h2><p>{s.text}</p></li>
+        ))}
+      </ol>
+    </div>
+  </section>
+  <section class="band band-maroon">
+    <Mandala class="mandala" size={700} />
+    <div class="wrap">
+      <div class="title-row"><div><p class="kicker">{w.collections}</p><h2 class="h2">{w.videos}</h2><p class="lead" style="margin-top:1rem">{w.videosText}</p></div>
+        <a class="btn btn-gold" href={site.lotusWisdom} rel="noopener" target="_blank">{w.videosCta} ↗</a></div>
+      <ul class="grid-cards">
+        {d.wisdomCollections.map((c) => <li class="tile" style="border-color:var(--gold)"><Img k={c.image} alt={c.title} sizes="(max-width: 600px) 92vw, 300px" cap={900} ratio="1" /><h3>{c.title}</h3></li>)}
+      </ul>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import PageHead from '../components/PageHead.astro';
+import Mandala from '../components/Mandala.astro';
+import { dict, data, url, type Lang } from '../i18n';
+import { site } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang); const d = data(lang); const g = t.donate;
+---
+<Base lang={lang} title={g.title} description={g.lead} current="donate" image="2024/08/donate.jpg">
+  <PageHead kicker={g.kicker} title={g.lead} image="2024/08/donate.jpg" shape="arch">
+    {g.intro.map((p) => <p class="lead">{p}</p>)}
+  </PageHead>
+
+  <section class="band band-jade">
+    <div class="wrap">
+      <ul class="stats">{d.stats.map((s) => <li><strong>{s.value}</strong><span>{s.label}</span></li>)}</ul>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap give-grid">
+      <div class="give reveal">
+        <Img k="2022/10/paypal.png" alt="PayPal" sizes="140px" cap={480} class="paypal-mark" style="width:120px;height:auto" />
+        <h2>{g.paypal}</h2>
+        <p>{g.paypalText}</p>
+        <form action={site.paypal.action} method="post" target="_top">
+          <input type="hidden" name="hosted_button_id" value={site.paypal.buttonId} />
+          <button class="btn btn-saffron" type="submit">{g.paypalCta} ↗</button>
+        </form>
+      </div>
+      <div class="give reveal">
+        <h2>{g.qr}</h2>
+        <p>{g.qrText}</p>
+        <div class="qr-pair">
+          <Img k="2026/05/微信图片_20260515194017_1303_23.jpg" alt={lang === 'zh' ? '支付宝二维码' : 'Alipay QR code'} sizes="200px" cap={480} />
+          <Img k="2026/05/微信图片_20260515194019_1304_23.jpg" alt={lang === 'zh' ? '银联云闪付二维码' : 'UnionPay QR code'} sizes="200px" cap={480} />
+        </div>
+      </div>
+      <div class="give reveal">
+        <h2>{g.etransfer}</h2>
+        <p>{g.etransferText} <a class="mono" href={`mailto:${site.etransfer}`}>{site.etransfer}</a></p>
+        <h2 style="margin-top:1rem">{g.bank}</h2>
+        <p>{g.bankText}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-maroon">
+    <Mandala class="mandala" size={640} />
+    <div class="wrap wrap-narrow" style="position:relative">
+      <p class="kicker">{g.direct}</p>
+      <h2 class="h2">{g.directText} <a href={`mailto:${site.email}`} style="color:var(--gold)">{site.email}</a></h2>
+      <p class="lead" style="margin-top:1.2rem">{g.directNote}</p>
+      <p style="margin-top:2rem"><a class="btn btn-gold" href={url(lang, 'visit')}>{t.nav.visit} →</a></p>
+    </div>
+  </section>
+</Base>

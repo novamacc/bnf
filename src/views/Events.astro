@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import PageHead from '../components/PageHead.astro';
+import EventCard from '../components/EventCard.astro';
+import { dict, data, type Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang); const d = data(lang); const e = t.events;
+const posters = ['2024/04/3-1.png', '2024/04/1-1.png', '2024/04/2-1.png'];
+---
+<Base lang={lang} title={e.title} description={e.lead} current="events" image="2024/04/upcpming-events.png">
+  <PageHead kicker={e.kicker} title={e.title} lead={e.lead} />
+  <section class="band">
+    <div class="wrap">
+      <div class="title-block"><h2 class="h2">{e.upcoming}</h2></div>
+      <div class="events-grid">{d.events.map((x) => <EventCard lang={lang} e={x} ask />)}</div>
+    </div>
+  </section>
+  <section class="band rule-top" id="programmes">
+    <div class="wrap">
+      <div class="title-block"><h2 class="h2">{e.posters}</h2></div>
+      <div class="events-grid poster-events">{d.alsoEvents.map((x) => <EventCard lang={lang} e={x} poster ask />)}</div>
+    </div>
+  </section>
+  <section class="band band-cream rule-top">
+    <div class="wrap">
+      <div class="title-block"><h2 class="h2">{e.past}</h2></div>
+      <div class="events-grid" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))">{d.pastEvents.map((x) => <EventCard lang={lang} e={x} />)}</div>
+    </div>
+  </section>
+  <section class="band rule-top">
+    <div class="wrap">
+      <div class="title-block"><h2 class="h2">{e.branchPosters}</h2></div>
+      <ul class="posters">{posters.map((k) => <li><Img k={k} alt="" sizes="(max-width: 600px) 92vw, 280px" cap={900} /></li>)}</ul>
+    </div>
+  </section>
+</Base>

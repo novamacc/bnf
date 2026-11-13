@@ -1,0 +1,6 @@
+---
+import View from '../../../views/Programme.astro';
+import { content } from '../../../data/content';
+export const getStaticPaths = () => content.programmes.map((p) => ({ params: { slug: p.slug } }));
+---
+<View lang="zh" slug={Astro.params.slug!} />

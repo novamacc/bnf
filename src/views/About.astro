@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import PageHead from '../components/PageHead.astro';
+import Lotus from '../components/Lotus.astro';
+import Mandala from '../components/Mandala.astro';
+import { dict, data, type Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang); const d = data(lang); const a = t.about;
+---
+<Base lang={lang} title={a.title} description={a.lead} current="about" image="2024/08/peace-.jpg">
+  <PageHead kicker={a.kicker} title={a.natureTitle} lead={a.lead}>
+    <ul class="qualities">{d.qualities.map((q) => <li>{q}</li>)}</ul>
+    <div slot="aside" class="float-figure"><Img k="2024/08/bodhisattva.png" alt="" sizes="(max-width: 860px) 80vw, 440px" cap={900} eager /></div>
+  </PageHead>
+
+  <section class="band" id="mission">
+    <div class="wrap">
+      <div class="title-block"><p class="kicker">{a.missionKicker}</p><h2 class="h2">{a.missionTitle}</h2></div>
+      {d.commitments.map((c, i) => (
+        <div class={`split reveal${i % 2 ? ' flip' : ''}`}>
+          <div class="split-media square"><Img k={c.image} alt="" sizes="(max-width: 860px) 92vw, 560px" cap={900} /></div>
+          <div><span class="commit-num">0{i + 1}</span><h2 style="margin-top:.6rem">{c.title}</h2><div class="body">{c.text.map((p) => <p>{p}</p>)}</div></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band band-maroon" id="path">
+    <Mandala class="mandala" size={700} />
+    <div class="wrap">
+      <div class="title-block"><p class="kicker">{a.pathKicker}</p><h2 class="h2">{a.pathTitle}</h2></div>
+      <ol class="path">{d.path.map((p) => <li><Img k={p.image} alt="" sizes="(max-width: 800px) 92vw, 380px" cap={900} /><h3>{p.title}</h3><p>{p.text}</p></li>)}</ol>
+    </div>
+  </section>
+
+  <section class="band" id="teachers">
+    <div class="wrap">
+      <div class="title-block"><p class="kicker">{a.teachersKicker}</p><h2 class="h2">{a.teachersTitle}</h2></div>
+      <div class="teachers">
+        {d.teachers.map((p) => (
+          <article class="teacher reveal">
+            <Img k={p.photo} alt={p.name} sizes="(max-width: 760px) 320px, 420px" cap={900} />
+            <div><h3>{p.name}</h3>{p.bio.map((b) => <p>{b}</p>)}</div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+  <Lotus />
+  <div class="lotus-sep"></div>
+</Base>

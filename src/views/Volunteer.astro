@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import PageHead from '../components/PageHead.astro';
+import { dict, data, url, type Lang } from '../i18n';
+import { site } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict(lang); const d = data(lang); const v = t.volunteer;
+---
+<Base lang={lang} title={v.title} description={v.lead} current="volunteer" image="2022/08/dubbing-900.jpg">
+  <PageHead kicker={v.kicker} title={v.lead}>
+    <p class="lead">{v.intro}</p>
+    <p style="margin-top:2rem"><a class="btn btn-saffron" href={site.volunteerForm} rel="noopener" target="_blank">{v.apply} ↗</a></p>
+  </PageHead>
+  <section class="band">
+    <div class="wrap">
+      <ol class="roles">
+        {d.volunteerRoles.map((r, i) => (
+          <li class="role reveal">
+            <div class="role-media">{r.images.map((k) => <Img k={k} alt="" sizes="(max-width: 800px) 46vw, 320px" cap={900} />)}</div>
+            <div>
+              <span class="tags">0{i + 1} · {r.tags}</span>
+              <h2>{r.title}</h2>
+              {r.text.map((p) => <p class="lead">{p}</p>)}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+  <section class="band" style="padding-top:0">
+    <div class="wrap">
+      <div class="callout">
+        <div>
+          <h2 class="h2">{v.others}</h2>
+          <p class="lead" style="margin-top:1rem">{v.othersText}</p>
+          <p class="muted" style="margin-top:1rem">{v.graduates}</p>
+          <div class="btn-row" style="margin-top:1.6rem">
+            <a class="btn btn-saffron" href={site.volunteerForm} rel="noopener" target="_blank">{v.apply} ↗</a>
+            <a class="btn" href={`mailto:${site.email}`}>{site.email}</a>
+          </div>
+        </div>
+        <div class="callout-photos">
+          <Img k="2022/08/editor-900-1.jpg" alt="" sizes="(max-width: 800px) 45vw, 240px" cap={900} />
+          <Img k="2022/08/dubbing-900-3.jpg" alt="" sizes="(max-width: 800px) 45vw, 240px" cap={900} />
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

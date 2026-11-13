@@ -1,0 +1,14 @@
+---
+/** Five-colour prayer-flag strip (blue, white, red, green, yellow) along the top of the page. */
+const colours = ['#2F5D9B', '#F7F1E3', '#B8322A', '#2F7A4F', '#E2B13C'];
+---
+<div class="prayer-flags" aria-hidden="true">
+  <svg width="100%" height="10" preserveAspectRatio="none" focusable="false">
+    <defs>
+      <pattern id="flags" width="90" height="10" patternUnits="userSpaceOnUse">
+        {colours.map((c, i) => <path d={`M${i * 18} 0h18v6l-9 4-9-4z`} fill={c} />)}
+      </pattern>
+    </defs>
+    <rect width="100%" height="10" fill="url(#flags)" />
+  </svg>
+</div>
