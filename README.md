@@ -3,6 +3,8 @@
 A static, bilingual (English / 简体中文) rebuild of [bodhinature.com](https://bodhinature.com), made from the
 foundation's own content and imagery. Astro 5, no client framework, ready for GitHub Pages.
 
+**Live demo:** https://novamacc.github.io/bnf/ (中文: https://novamacc.github.io/bnf/zh/)
+
 - English at `/`, Simplified Chinese at `/zh/` — 15 routes each (home, about, programmes index, five programme
   pages, wisdom, community, events, volunteer, donate, visit/contact, 404).
 - About 3 KB of inline JS per page (header state, mobile drawer, ⌘K search palette, quote rotator). No JS bundles.
